@@ -52,7 +52,9 @@ async def create_payment(
             currency=request.currency,
             description=request.description,
             metadata=request.metadata,
-            webhook_url=request.webhook_url,
+            webhook_url=str(request.webhook_url)
+            if request.webhook_url is not None
+            else None,
             idempotency_key=idempotency_key,
         ),
     )

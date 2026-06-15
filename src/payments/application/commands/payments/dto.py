@@ -11,5 +11,5 @@ class CreatePaymentInput:
     currency: Currency
     description: str
     metadata: dict[str, Any]
-    webhook_url: str
+    webhook_url: str | None
     idempotency_key: str

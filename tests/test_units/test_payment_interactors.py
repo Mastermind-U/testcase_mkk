@@ -14,7 +14,7 @@ from payments.application.commands.send_webhook import SendWebhookInteractor
 from payments.application.common.payment_dto import PaymentDTO
 from payments.application.queries.payments import ReadPaymentInteractor
 from payments.entities.entities import BaseEntity, Money, OutboxEvent, Payment
-from payments.entities.enums import Currency, PaymentStatus
+from payments.entities.enums import Currency, OutboxStatus, PaymentStatus
 from payments.entities.exceptions import ObjectNotFoundError
 
 
@@ -182,7 +182,11 @@ async def test_process_payment_success_updates_status_and_sends_webhook() -> (
     assert len(saver.saved) == 1
     assert isinstance(saver.saved[0], OutboxEvent)
     assert saver.saved[0].event_type == "payments.webhook"
-    assert saver.saved[0].payload == {"payment_id": str(payment.id)}
+    assert saver.saved[0].payload == {
+        "payment_id": str(payment.id),
+        "retry_times": 0,
+        "max_retries": 3,
+    }
     assert tx.committed == 1
 
 
@@ -218,7 +222,7 @@ async def test_process_payment_skips_webhook_outbox_when_url_is_empty() -> (
         description="Invoice",
         metadata={},
         idempotency_key="key-1",
-        webhook_url="",
+        webhook_url=None,
     )
     saver = EntitySaverFake()
     tx = TransactionManagerFake()
@@ -246,12 +250,19 @@ async def test_send_webhook_sends_existing_payment() -> None:
         webhook_url="https://example.com/webhook",
     )
     webhook = WebhookSenderFake()
-    interactor = SendWebhookInteractor(PaymentGatewayFake(payment), webhook)
+    tx = TransactionManagerFake()
+    interactor = SendWebhookInteractor(
+        PaymentGatewayFake(payment),
+        webhook,
+        EntitySaverFake(),
+        tx,
+    )
 
     await interactor.execute(payment.id)
 
     assert len(webhook.sent) == 1
     assert webhook.sent[0].id == payment.id  # type: ignore[attr-defined]
+    assert tx.committed == 1
 
 
 async def test_send_webhook_skips_empty_webhook_url() -> None:
@@ -260,20 +271,91 @@ async def test_send_webhook_skips_empty_webhook_url() -> None:
         description="Invoice",
         metadata={},
         idempotency_key="key-1",
-        webhook_url="",
+        webhook_url=None,
     )
     webhook = WebhookSenderFake()
-    interactor = SendWebhookInteractor(PaymentGatewayFake(payment), webhook)
+    saver = EntitySaverFake()
+    tx = TransactionManagerFake()
+    interactor = SendWebhookInteractor(
+        PaymentGatewayFake(payment),
+        webhook,
+        saver,
+        tx,
+    )
 
     await interactor.execute(payment.id)
 
     assert webhook.sent == []
+    assert saver.saved == []
+    assert tx.committed == 0
+
+
+async def test_send_webhook_failure_schedules_outbox_retry() -> None:
+    payment = Payment(
+        amount=Money(Decimal("10.00"), Currency.RUB),
+        description="Invoice",
+        metadata={},
+        idempotency_key="key-1",
+        webhook_url="https://example.com/webhook",
+    )
+    saver = EntitySaverFake()
+    tx = TransactionManagerFake()
+    interactor = SendWebhookInteractor(
+        PaymentGatewayFake(payment),
+        WebhookSenderFake(should_fail=True),
+        saver,
+        tx,
+    )
+
+    await interactor.execute(payment.id)
+
+    assert len(saver.saved) == 1
+    retry_event = saver.saved[0]
+    assert isinstance(retry_event, OutboxEvent)
+    assert retry_event.event_type == "payments.webhook"
+    assert retry_event.status == OutboxStatus.FAILED
+    assert retry_event.retry_times == 1
+    assert retry_event.next_retry_at is not None
+    assert retry_event.failure_reason == "webhook is down"
+    assert retry_event.payload == {
+        "payment_id": str(payment.id),
+        "retry_times": 1,
+        "max_retries": 3,
+    }
+    assert tx.committed == 1
+
+
+async def test_send_webhook_failure_dead_letters_after_limit() -> None:
+    payment = Payment(
+        amount=Money(Decimal("10.00"), Currency.RUB),
+        description="Invoice",
+        metadata={},
+        idempotency_key="key-1",
+        webhook_url="https://example.com/webhook",
+    )
+    saver = EntitySaverFake()
+    interactor = SendWebhookInteractor(
+        PaymentGatewayFake(payment),
+        WebhookSenderFake(should_fail=True),
+        saver,
+        TransactionManagerFake(),
+    )
+
+    await interactor.execute(payment.id, retry_times=2, max_retries=3)
+
+    dead_event = saver.saved[0]
+    assert isinstance(dead_event, OutboxEvent)
+    assert dead_event.status == OutboxStatus.DEAD_LETTER
+    assert dead_event.retry_times == 3
+    assert dead_event.next_retry_at is None
 
 
 async def test_send_webhook_raises_not_found() -> None:
     interactor = SendWebhookInteractor(
         PaymentGatewayFake(),
         WebhookSenderFake(),
+        EntitySaverFake(),
+        TransactionManagerFake(),
     )
 
     with pytest.raises(ObjectNotFoundError):

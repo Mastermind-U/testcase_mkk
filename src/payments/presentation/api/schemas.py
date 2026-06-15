@@ -3,10 +3,12 @@ from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import AnyHttpUrl, BaseModel, Field, TypeAdapter
 
 from payments.application.common.payment_dto import PaymentDTO
 from payments.entities.enums import Currency, PaymentStatus
+
+webhook_url_adapter = TypeAdapter(AnyHttpUrl)
 
 
 class StatusResponse(BaseModel):
@@ -18,7 +20,7 @@ class CreatePaymentRequest(BaseModel):
     currency: Currency
     description: str = Field(min_length=1, max_length=500)
     metadata: dict[str, Any] = Field(default_factory=dict)
-    webhook_url: str = ""
+    webhook_url: AnyHttpUrl | None = None
 
 
 class CreatePaymentResponse(BaseModel):
@@ -43,7 +45,7 @@ class PaymentResponse(BaseModel):
     metadata: dict[str, Any]
     status: PaymentStatus
     idempotency_key: str
-    webhook_url: str
+    webhook_url: AnyHttpUrl | None
     created_at: datetime
     processed_at: datetime | None
 
@@ -57,7 +59,11 @@ class PaymentResponse(BaseModel):
             metadata=payment.metadata,
             status=payment.status,
             idempotency_key=payment.idempotency_key,
-            webhook_url=payment.webhook_url,
+            webhook_url=webhook_url_adapter.validate_python(
+                payment.webhook_url,
+            )
+            if payment.webhook_url is not None
+            else None,
             created_at=payment.created_at,
             processed_at=payment.processed_at,
         )

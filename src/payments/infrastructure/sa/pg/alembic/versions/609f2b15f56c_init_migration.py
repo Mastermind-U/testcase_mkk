@@ -34,7 +34,7 @@ def upgrade(container: AsyncContainer) -> None:  # noqa: ARG001
         sa.Column("description", sa.Text(), nullable=False),
         sa.Column("metadata", postgresql.JSON(), nullable=False),
         sa.Column("idempotency_key", sa.String(), nullable=False),
-        sa.Column("webhook_url", sa.Text(), nullable=False),
+        sa.Column("webhook_url", sa.Text(), nullable=True),
         sa.Column(
             "status",
             sa.Enum(

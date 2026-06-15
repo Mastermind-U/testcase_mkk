@@ -69,7 +69,7 @@ payments_t = Table(
     Column("description", Text, nullable=False),
     Column("metadata", JSON, nullable=False),
     Column("idempotency_key", String, nullable=False),
-    Column("webhook_url", Text, nullable=False),
+    Column("webhook_url", Text, nullable=True),
     Column(
         "status",
         SAEnum(PaymentStatus, name="payment_status"),

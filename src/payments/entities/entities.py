@@ -18,7 +18,7 @@ class Payment(BaseEntity):
     description: str
     metadata: dict[str, Any]
     idempotency_key: str
-    webhook_url: str
+    webhook_url: str | None
     id: uuid.UUID = field(init=False, default_factory=uuid.uuid4)
     status: PaymentStatus = PaymentStatus.PENDING
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))

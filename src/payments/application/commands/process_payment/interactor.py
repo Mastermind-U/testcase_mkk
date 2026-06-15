@@ -48,7 +48,11 @@ class ProcessPaymentInteractor:
             self._entity_saver.add_one(
                 OutboxEvent(
                     event_type="payments.webhook",
-                    payload={"payment_id": str(payment.id)},
+                    payload={
+                        "payment_id": str(payment.id),
+                        "retry_times": 0,
+                        "max_retries": 3,
+                    },
                 ),
             )
 

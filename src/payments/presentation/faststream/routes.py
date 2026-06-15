@@ -22,6 +22,12 @@ class PaymentNewMessage(BaseModel):
     payment_id: UUID
 
 
+class PaymentWebhookMessage(BaseModel):
+    payment_id: UUID
+    retry_times: int = 0
+    max_retries: int = 3
+
+
 @router.subscriber(
     payments_new_queue,
     payments_exchange,
@@ -40,7 +46,11 @@ async def process_payment(
     ack_policy=AckPolicy.NACK_ON_ERROR,
 )
 async def send_payment_webhook(
-    message: PaymentNewMessage,
+    message: PaymentWebhookMessage,
     interactor: FromDishka[SendWebhookInteractor],
 ) -> None:
-    await interactor.execute(message.payment_id)
+    await interactor.execute(
+        message.payment_id,
+        retry_times=message.retry_times,
+        max_retries=message.max_retries,
+    )

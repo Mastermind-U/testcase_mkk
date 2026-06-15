@@ -17,7 +17,7 @@ class PaymentDTO:
     metadata: dict[str, Any]
     status: PaymentStatus
     idempotency_key: str
-    webhook_url: str
+    webhook_url: str | None
     created_at: datetime
     processed_at: datetime | None
 

@@ -128,12 +128,12 @@ def test_create_payment_contract(
     }
 
 
-def test_create_payment_accepts_empty_webhook_url(
+def test_create_payment_accepts_null_webhook_url(
     http_client: TestClient,
     config: Config,
 ) -> None:
     body = payment_body()
-    body["webhook_url"] = ""
+    body["webhook_url"] = None
 
     response = http_client.post(
         "/api/v1/payments",
@@ -142,6 +142,22 @@ def test_create_payment_accepts_empty_webhook_url(
     )
 
     assert response.status_code == status.HTTP_202_ACCEPTED
+
+
+def test_create_payment_rejects_invalid_webhook_url(
+    http_client: TestClient,
+    config: Config,
+) -> None:
+    body = payment_body()
+    body["webhook_url"] = "not-a-url"
+
+    response = http_client.post(
+        "/api/v1/payments",
+        headers=auth_headers(config),
+        json=body,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_create_payment_duplicate_idempotency_returns_same_payment(

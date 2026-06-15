@@ -12,6 +12,9 @@ class HTTPXWebhookSender(WebhookSender):
         self._client = client
 
     async def send(self, payment: PaymentDTO) -> None:
+        if payment.webhook_url is None:
+            return
+
         response = await self._client.post(
             payment.webhook_url,
             json=self._to_payload(payment),
