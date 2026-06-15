@@ -211,7 +211,7 @@ def test_create_payment_requires_idempotency_key(
         json=payment_body(),
     )
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 def test_create_payment_rejects_invalid_currency(
@@ -227,7 +227,7 @@ def test_create_payment_rejects_invalid_currency(
         json=body,
     )
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 def test_create_payment_rejects_invalid_amount(
@@ -243,7 +243,7 @@ def test_create_payment_rejects_invalid_amount(
         json=body,
     )
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 def test_get_payment_contract(

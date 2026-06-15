@@ -251,7 +251,7 @@ async def test_send_webhook_sends_existing_payment() -> None:
     await interactor.execute(payment.id)
 
     assert len(webhook.sent) == 1
-    assert webhook.sent[0].id == payment.id
+    assert webhook.sent[0].id == payment.id  # type: ignore[attr-defined]
 
 
 async def test_send_webhook_skips_empty_webhook_url() -> None:
