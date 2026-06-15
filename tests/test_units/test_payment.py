@@ -37,7 +37,7 @@ def test_payment_mark_failed_sets_status_and_processed_at() -> None:
     assert payment.processed_at is not None
 
 
-def test_outbox_event_defaults_to_three_retries() -> None:
+def test_outbox_event_defaults_to_three_total_attempts() -> None:
     event = OutboxEvent(event_type="payments.new", payload={})
 
     assert event.status == OutboxStatus.PENDING

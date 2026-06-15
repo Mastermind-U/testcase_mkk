@@ -22,7 +22,7 @@ class SAPGOutboxProcessorGateway(OutboxProcessorGateway):
             select(OutboxEvent)
             .where(q(OutboxEvent.sent_at).is_(None))
             .where(q(OutboxEvent.status).in_(waiting_statuses))
-            .where(q(OutboxEvent.retry_times) <= OutboxEvent.max_retries)
+            .where(q(OutboxEvent.retry_times) < OutboxEvent.max_retries)
             .where(
                 q(OutboxEvent.next_retry_at).is_(None)
                 | (q(OutboxEvent.next_retry_at) <= now),

@@ -75,7 +75,7 @@ class OutboxEvent(BaseEntity):
         self.last_error_at = now
         self.failure_reason = reason
 
-        if self.retry_times > self.max_retries:
+        if self.retry_times >= self.max_retries:
             self.status = OutboxStatus.DEAD_LETTER
             self.next_retry_at = None
             return

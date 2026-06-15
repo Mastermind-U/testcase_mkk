@@ -80,7 +80,7 @@ async def test_outbox_processor_dead_lettered() -> None:
         event_type="user.created",
         payload={"id": 1},
         retry_times=1,
-        max_retries=1,
+        max_retries=2,
     )
     now = datetime(2026, 4, 11, 12, 0, tzinfo=UTC)
     event.get_now = lambda: now  # type: ignore[method-assign]
@@ -98,5 +98,6 @@ async def test_outbox_processor_dead_lettered() -> None:
 
     assert result.retried == 0
     assert result.dead_lettered == 1
+    assert event.retry_times == 2
     assert event.status == OutboxStatus.DEAD_LETTER
     assert event.next_retry_at is None

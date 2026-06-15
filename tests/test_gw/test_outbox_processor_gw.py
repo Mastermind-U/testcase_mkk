@@ -49,8 +49,8 @@ async def test_outbox_gateway_get_waiting_returns_only_ready_events(
         event_type="user.created",
         payload={"id": 5},
         status=OutboxStatus.FAILED,
-        retry_times=2,
-        max_retries=1,
+        retry_times=3,
+        max_retries=3,
     )
 
     session.add_all(
