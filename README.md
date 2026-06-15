@@ -79,18 +79,51 @@ curl -i http://payments.localhost/api/v1/payments/00000000-0000-0000-0000-000000
   -H "X-API-Key: dev-api-key"
 ```
 
-## Processing
+## Processing Pipeline
 
-`POST /api/v1/payments` stores a pending payment and an outbox event in
-one database transaction. The outbox scheduler publishes the event to the
-RabbitMQ `payments.new` queue. The consumer receives the message, emulates
-payment gateway processing with a 2-5 second delay and 90% success rate,
-updates the payment status, and sends a webhook.
+The service uses the transactional outbox pattern between the HTTP API and
+RabbitMQ.
 
-`payments.new` is declared as a RabbitMQ quorum queue with delivery limit
-`3`. If the consumer fails, FastStream nacks the message. After 3 failed
-deliveries RabbitMQ moves it to `payments.new.dlq` through the
-`payments.dlx` dead-letter exchange.
+1. `POST /api/v1/payments` validates the request and calls
+   `CreatePaymentInteractor`.
+2. The interactor creates a `Payment` with status `pending` and an
+   `OutboxEvent` with event type `payments.new` in one database transaction.
+   The outbox payload is `{"payment_id": "<payment_id>"}`.
+3. The outbox scheduler periodically reads pending or retry-ready outbox
+   rows and publishes them to RabbitMQ through FastStream.
+4. When publishing succeeds, the outbox row is marked as published. If
+   publishing fails, the outbox row is marked as failed and scheduled for
+   retry with exponential backoff. After the configured retry limit it is
+   marked as dead-lettered in the database.
+5. The RabbitMQ consumer reads messages from the `payments.new` queue and
+   calls `ProcessPaymentInteractor`.
+6. The interactor loads the payment, skips already processed payments, calls
+   the external payment gateway emulator, updates the payment status, sends
+   the webhook, and commits the transaction.
+
+RabbitMQ topology:
+
+- `payments` exchange: main exchange for payment events.
+- `payments.new` queue: durable quorum queue for new payment processing.
+- `payments.dlx` exchange: dead-letter exchange.
+- `payments.new.dlq` queue: dead-letter queue for messages that RabbitMQ can
+  no longer deliver successfully.
+
+Consumer retries are handled by RabbitMQ. The `payments.new` queue has
+delivery limit `3`, and the consumer uses `NACK_ON_ERROR`. If the consumer
+raises an exception, FastStream nacks the message. RabbitMQ redelivers it
+until the delivery limit is exhausted, then routes it to `payments.new.dlq`
+through `payments.dlx`.
+
+Business failures and infrastructure failures are intentionally different:
+
+- If the external gateway returns a business decline, the payment is marked
+  as `failed`, the message is acknowledged, and it is not sent to the DLQ.
+- If the external gateway call, database work, or webhook call raises an
+  exception, the message is nacked and retried by RabbitMQ. After 3 failed
+  deliveries it lands in `payments.new.dlq`.
+- Outbox dead-lettering is separate from RabbitMQ DLQ. It means the service
+  could not publish the event to RabbitMQ after its own retry attempts.
 
 Webhook payload:
 
@@ -138,7 +171,7 @@ Request 1.
 ```
 
 - Side effects: `payments` inserts one row with status `pending`;
-  `outbox_events` inserts one event with topic `payments.new` and payload
+  `outbox_events` inserts one event with type `payments.new` and payload
   `{"payment_id": "<payment_id>"}`. The outbox scheduler publishes the
   event to RabbitMQ. The `payments` consumer processes it, updates the
   payment status to `succeeded` or `failed`, sets `processed_at`, and sends
