@@ -5,8 +5,6 @@ services:
     restart: unless-stopped
     env_file:
       - local.env
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,9 +20,6 @@ services:
     restart: unless-stopped
     env_file:
       - local.env
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -37,6 +32,7 @@ services:
   migrations:
     build:
       context: .
+      dockerfile: .docker/Dockerfile
     env_file:
       - local.env
     environment:
@@ -50,14 +46,13 @@ services:
   api:
     build:
       context: .
+      dockerfile: .docker/Dockerfile
     env_file:
       - local.env
     environment:
       APP_HOST: 0.0.0.0
       POSTGRES_HOST: postgres
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
-    ports:
-      - "8000:8000"
     expose:
       - "8000"
     depends_on:
@@ -77,6 +72,7 @@ services:
   outbox-scheduler:
     build:
       context: .
+      dockerfile: .docker/Dockerfile
     env_file:
       - local.env
     environment:
@@ -94,6 +90,7 @@ services:
   consumer:
     build:
       context: .
+      dockerfile: .docker/Dockerfile
     env_file:
       - local.env
     environment:

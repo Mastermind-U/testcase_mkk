@@ -17,21 +17,24 @@ docker compose up --build
 ```
 
 The API is available at `http://payments.localhost/api/v1` through Traefik
-and at `http://localhost:8000/api/v1` directly.
 The Traefik dashboard is available at `http://traefik.payments.localhost`.
-RabbitMQ management UI is available at `http://localhost:15672`
-with `guest` / `guest`.
+PostgreSQL, RabbitMQ, and the API container ports are not published by the
+default compose file.
 
 Local development:
 
 ```bash
 uv sync
-docker compose up postgres rabbitmq
+docker compose -f docker-compose.dev.yml up -d
 alembic upgrade head
 python -m payments --app
 python -m payments --scheduler
 python -m payments --consumer
 ```
+
+The dev compose file starts only PostgreSQL and RabbitMQ. Their ports are bound
+to localhost: PostgreSQL at `127.0.0.1:5432`, RabbitMQ at `127.0.0.1:5672`,
+and RabbitMQ management UI at `http://127.0.0.1:15672` with `guest` / `guest`.
 
 ## Environment
 

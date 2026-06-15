@@ -34,5 +34,6 @@ RUN addgroup -S app_user \
     && adduser -S -G app_user -h /home/app app_user
 
 COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/alembic.docker.ini /app/alembic.ini
 
 USER app_user
