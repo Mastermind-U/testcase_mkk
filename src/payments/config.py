@@ -18,6 +18,8 @@ class Config:
     RABBITMQ_URL: str = "amqp://guest:guest@localhost:5672/"
     OUTBOX_SCHEDULER_INTERVAL_SECONDS: float = 1.0
     OUTBOX_SCHEDULER_BATCH_SIZE: int = 100
+    API_KEY: str = "dev-api-key"
+    WEBHOOK_TIMEOUT_SECONDS: float = 5.0
 
     @classmethod
     def from_env(cls) -> Config:
@@ -40,6 +42,11 @@ class Config:
             OUTBOX_SCHEDULER_INTERVAL_SECONDS=cls._env_float(
                 "OUTBOX_SCHEDULER_INTERVAL_SECONDS",
                 cls.OUTBOX_SCHEDULER_INTERVAL_SECONDS,
+            ),
+            API_KEY=os.getenv("API_KEY", cls.API_KEY),
+            WEBHOOK_TIMEOUT_SECONDS=cls._env_float(
+                "WEBHOOK_TIMEOUT_SECONDS",
+                cls.WEBHOOK_TIMEOUT_SECONDS,
             ),
         )
 
