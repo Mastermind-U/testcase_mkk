@@ -4,9 +4,9 @@ from collections.abc import AsyncIterator
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from dci_template.entities.entities import TransactionalInbox
-from dci_template.infrastructure.sa.pg.tables import transactional_inbox_t
-from dci_template.infrastructure.sa.pg.transaction_manager import (
+from payments.entities.entities import TransactionalInbox
+from payments.infrastructure.sa.pg.tables import transactional_inbox_t
+from payments.infrastructure.sa.pg.transaction_manager import (
     SAPGEntitySaver,
 )
 

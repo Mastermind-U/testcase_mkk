@@ -1,2 +1,2 @@
 up:
-    python -m dci_template
+    python -m payments

@@ -4,9 +4,9 @@ import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.entities.entities import OutboxEvent
-from dci_template.entities.enums import OutboxStatus
-from dci_template.infrastructure.sa.pg.gateways.outbox_processor_gw import (
+from payments.entities.entities import OutboxEvent
+from payments.entities.enums import OutboxStatus
+from payments.infrastructure.sa.pg.gateways.outbox_processor_gw import (
     SAPGOutboxProcessorGateway,
 )
 

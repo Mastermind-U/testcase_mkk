@@ -3,12 +3,12 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.application.commands.outbox_processor.gateway import (
+from payments.application.commands.outbox_processor.gateway import (
     OutboxProcessorGateway,
 )
-from dci_template.entities.entities import OutboxEvent
-from dci_template.entities.enums import OutboxStatus
-from dci_template.infrastructure.sa.pg.tables import q
+from payments.entities.entities import OutboxEvent
+from payments.entities.enums import OutboxStatus
+from payments.infrastructure.sa.pg.tables import q
 
 
 class SAPGOutboxProcessorGateway(OutboxProcessorGateway):

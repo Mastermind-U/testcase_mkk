@@ -1,4 +1,4 @@
-# DCI-TEMPLATE - %projectname%
+# payments - %projectname%
 
 # install and run
 ```bash
@@ -6,7 +6,7 @@ docker compose up
 ```
 ```bash
 uv sync
-python -m dci_template
+python -m payments
 ```
 alembic
 ```bash

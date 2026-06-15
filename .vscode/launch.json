@@ -9,7 +9,7 @@
             "name": "Python Debugger: Module",
             "type": "debugpy",
             "request": "launch",
-            "module": "dci_template"
+            "module": "payments"
         }
     ]
 }

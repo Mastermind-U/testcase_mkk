@@ -25,8 +25,8 @@ from testcontainers.postgres import (  # pyright: ignore[reportMissingTypeStubs]
     PostgresContainer,
 )
 
-from dci_template import create_app
-from dci_template.config import Config
+from payments import create_app
+from payments.config import Config
 
 POSTGRES_IMAGE = "postgres:15.17-trixie"
 

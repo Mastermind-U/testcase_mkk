@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
-from dci_template.entities.entities import OutboxEvent
-from dci_template.entities.enums import OutboxStatus
+from payments.entities.entities import OutboxEvent
+from payments.entities.enums import OutboxStatus
 
 
 def test_outbox_event_mark_failed_sets_retry_backoff() -> None:

@@ -1,7 +1,7 @@
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, HTTPException, status
 
-from dci_template.application.queries.healthcheck.interactor import (
+from payments.application.queries.healthcheck.interactor import (
     HealthCheckInteractor,
 )
 

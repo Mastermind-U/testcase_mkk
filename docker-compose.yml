@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15.17-trixie
-    container_name: dci-template-postgres
+    container_name: payments-postgres
     restart: unless-stopped
     env_file:
       - local.env
@@ -18,7 +18,7 @@ services:
 
   kafka:
     image: apache/kafka:4.0.2
-    container_name: dci-template-kafka
+    container_name: payments-kafka
     restart: unless-stopped
     user: "0:0"
     env_file:

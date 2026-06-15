@@ -9,10 +9,10 @@ from fastapi import FastAPI
 from starlette.types import Lifespan
 from structlog import get_logger
 
-from dci_template.application.commands.outbox_processor.interactor import (
+from payments.application.commands.outbox_processor.interactor import (
     OutboxProcessorInteractor,
 )
-from dci_template.config import Config
+from payments.config import Config
 
 _logger = get_logger(source="scheduler")
 

@@ -1,18 +1,18 @@
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock
 
-from dci_template.application.commands.outbox_processor.gateway import (
+from payments.application.commands.outbox_processor.gateway import (
     OutboxProcessorGateway,
 )
-from dci_template.application.commands.outbox_processor.interactor import (
+from payments.application.commands.outbox_processor.interactor import (
     OutboxProcessorInteractor,
 )
-from dci_template.application.commands.outbox_processor.publisher import (
+from payments.application.commands.outbox_processor.publisher import (
     OutboxPublisher,
 )
-from dci_template.application.transaction_manager import TransactionManager
-from dci_template.entities.entities import OutboxEvent
-from dci_template.entities.enums import OutboxStatus
+from payments.application.transaction_manager import TransactionManager
+from payments.entities.entities import OutboxEvent
+from payments.entities.enums import OutboxStatus
 
 
 async def test_outbox_processor_publishes_waiting() -> None:

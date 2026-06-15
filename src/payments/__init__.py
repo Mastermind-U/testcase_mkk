@@ -8,19 +8,19 @@ from fastapi import FastAPI
 from sqlalchemy import exc as sa_exc
 from structlog import get_logger
 
-from dci_template.config import Config
-from dci_template.entities.exceptions import (
+from payments.config import Config
+from payments.entities.exceptions import (
     BaseDomainError,
     ObjectNotFoundError,
 )
-from dci_template.ioc import MainProvider
-from dci_template.presentation.api import routers
-from dci_template.presentation.api.exception_handlers import (
+from payments.ioc import MainProvider
+from payments.presentation.api import routers
+from payments.presentation.api.exception_handlers import (
     handle_base_domain_exc,
     handle_db_connect_error,
     handle_obj_not_found,
 )
-from dci_template.presentation.outbox_scheduler import (
+from payments.presentation.outbox_scheduler import (
     create_scheduler_lifespan,
     run_scheduler_loop,
 )
@@ -67,7 +67,7 @@ logger = get_logger(__name__)
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        prog="dci_template",
+        prog="payments",
         description="Run the application or the scheduler.",
     )
     mode_group = parser.add_mutually_exclusive_group()
@@ -94,7 +94,7 @@ def main(argv: list[str] | None = None) -> None:
 
     logger.info("Application is starting...")
     uvicorn.run(
-        "dci_template:create_app",
+        "payments:create_app",
         host=cfg.APP_HOST,
         port=cfg.APP_PORT,
         reload=cfg.DEBUG,

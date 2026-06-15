@@ -1,5 +1,5 @@
 [project]
-name = "dci_template"
+name = "payments"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -27,7 +27,7 @@ linters = ["import-linter>=2.11", "mypy>=1.20.0", "ruff>=0.15.10"]
 test = ["pytest>=9.0.3", "pytest-asyncio>=1.3.0", "testcontainers>=4.14.2"]
 
 [project.scripts]
-dci_template = "dci_template:main"
+payments = "payments:main"
 
 [tool.uv]
 package = true
@@ -136,7 +136,7 @@ ignore-variadic-names = true
 max-complexity = 15
 
 [tool.ruff.lint.isort]
-known-first-party = ["dci_template"]
+known-first-party = ["payments"]
 known-third-party = [
     "alembic", # Treat Alembic as a third-party dependency for import grouping.
 ]
@@ -152,7 +152,7 @@ suppress-none-returning = true
 quote-annotations = true
 
 [tool.importlinter]
-root_package = "dci_template"
+root_package = "payments"
 include_external_packages = true
 exclude_type_checking_imports = true
 
@@ -160,7 +160,7 @@ exclude_type_checking_imports = true
 name = "clean arch contract"
 type = "layers"
 layers = ["infrastructure", "presentation", "application", "entities"]
-containers = ["dci_template"]
+containers = ["payments"]
 
 [tool.pytest]
 asyncio_mode = "auto"

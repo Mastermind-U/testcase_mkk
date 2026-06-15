@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from structlog import get_logger
 
-from dci_template.application.commands.outbox_processor.dto import (
+from payments.application.commands.outbox_processor.dto import (
     OutboxProcessorResult,
 )
-from dci_template.application.commands.outbox_processor.gateway import (
+from payments.application.commands.outbox_processor.gateway import (
     OutboxProcessorGateway,
 )
-from dci_template.application.commands.outbox_processor.publisher import (
+from payments.application.commands.outbox_processor.publisher import (
     OutboxPublisher,
 )
-from dci_template.application.transaction_manager import TransactionManager
-from dci_template.entities.enums import OutboxStatus
+from payments.application.transaction_manager import TransactionManager
+from payments.entities.enums import OutboxStatus
 
 _logger = get_logger(source="OutboxProcessorInteractor")
 

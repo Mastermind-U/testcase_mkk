@@ -1,9 +1,9 @@
 from unittest.mock import AsyncMock
 
-from dci_template.application.queries.healthcheck.gateway import (
+from payments.application.queries.healthcheck.gateway import (
     HealthCheckGateway,
 )
-from dci_template.application.queries.healthcheck.interactor import (
+from payments.application.queries.healthcheck.interactor import (
     HealthCheckInteractor,
 )
 

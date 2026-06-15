@@ -1,6 +1,6 @@
 """Python -m entrypoint."""
 
-from dci_template import main
+from payments import main
 
 if __name__ == "__main__":
     main()

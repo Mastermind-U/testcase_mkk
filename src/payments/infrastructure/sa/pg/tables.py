@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSON, UUID as PG_UUID
 from sqlalchemy.orm import QueryableAttribute, registry
 
-from dci_template.entities.entities import (
+from payments.entities.entities import (
     OutboxEvent,
     OutboxStatus,
     TransactionalInbox,

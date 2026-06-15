@@ -13,11 +13,11 @@ from dishka import (
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from dci_template.application.queries.healthcheck.dto import HealthStatus
-from dci_template.application.queries.healthcheck.interactor import (
+from payments.application.queries.healthcheck.dto import HealthStatus
+from payments.application.queries.healthcheck.interactor import (
     HealthCheckInteractor,
 )
-from dci_template.config import Config
+from payments.config import Config
 from tests.conftest import TestProvider
 
 

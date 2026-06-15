@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from dci_template.entities.entities import BaseEntity
+from payments.entities.entities import BaseEntity
 
 
 class TransactionManager(Protocol):

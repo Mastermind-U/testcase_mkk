@@ -2,8 +2,8 @@ from unittest.mock import AsyncMock
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.entities.entities import BaseEntity
-from dci_template.infrastructure.sa.pg.transaction_manager import (
+from payments.entities.entities import BaseEntity
+from payments.infrastructure.sa.pg.transaction_manager import (
     SAPGEntitySaver,
     SAPGTransactionManager,
 )

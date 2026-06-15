@@ -3,22 +3,22 @@ from unittest.mock import AsyncMock
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.application.commands.outbox_processor.gateway import (
+from payments.application.commands.outbox_processor.gateway import (
     OutboxProcessorGateway,
 )
-from dci_template.application.commands.outbox_processor.interactor import (
+from payments.application.commands.outbox_processor.interactor import (
     OutboxProcessorInteractor,
 )
-from dci_template.application.commands.outbox_processor.publisher import (
+from payments.application.commands.outbox_processor.publisher import (
     OutboxPublisher,
 )
-from dci_template.application.transaction_manager import TransactionManager
-from dci_template.entities.entities import OutboxEvent
-from dci_template.entities.enums import OutboxStatus
-from dci_template.infrastructure.sa.pg.gateways.outbox_processor_gw import (
+from payments.application.transaction_manager import TransactionManager
+from payments.entities.entities import OutboxEvent
+from payments.entities.enums import OutboxStatus
+from payments.infrastructure.sa.pg.gateways.outbox_processor_gw import (
     SAPGOutboxProcessorGateway,
 )
-from dci_template.infrastructure.sa.pg.transaction_manager import (
+from payments.infrastructure.sa.pg.transaction_manager import (
     SAPGTransactionManager,
 )
 

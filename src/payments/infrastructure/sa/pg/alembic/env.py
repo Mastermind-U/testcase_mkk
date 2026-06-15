@@ -6,9 +6,9 @@ from dishka import AsyncContainer, make_async_container
 from sqlalchemy import Connection
 from sqlalchemy.ext.asyncio import AsyncConnection
 
-from dci_template.config import Config
-from dci_template.infrastructure.sa.pg.tables import metadata
-from dci_template.ioc import MainProvider
+from payments.config import Config
+from payments.infrastructure.sa.pg.tables import metadata
+from payments.ioc import MainProvider
 
 config = context.config
 

@@ -1,7 +1,7 @@
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.infrastructure.sa.pg.gateways.healthcheck_gw import (
+from payments.infrastructure.sa.pg.gateways.healthcheck_gw import (
     SAPGHealthCheckGateway,
 )
 

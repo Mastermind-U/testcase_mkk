@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dci_template.entities.entities import BaseEntity
+from payments.entities.entities import BaseEntity
 
 
 class SAPGTransactionManager:

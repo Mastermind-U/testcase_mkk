@@ -15,34 +15,34 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from dci_template.application.commands.outbox_processor.gateway import (
+from payments.application.commands.outbox_processor.gateway import (
     OutboxProcessorGateway,
 )
-from dci_template.application.commands.outbox_processor.interactor import (
+from payments.application.commands.outbox_processor.interactor import (
     OutboxProcessorInteractor,
 )
-from dci_template.application.commands.outbox_processor.publisher import (
+from payments.application.commands.outbox_processor.publisher import (
     OutboxPublisher,
 )
-from dci_template.application.queries.healthcheck import (
+from payments.application.queries.healthcheck import (
     HealthCheckGateway,
     HealthCheckInteractor,
 )
-from dci_template.application.transaction_manager import (
+from payments.application.transaction_manager import (
     EntitySaver,
     TransactionManager,
 )
-from dci_template.config import Config
-from dci_template.infrastructure.faststream.publisher import (
+from payments.config import Config
+from payments.infrastructure.faststream.publisher import (
     FaststreamKafkaOutboxPublisher,
 )
-from dci_template.infrastructure.sa.pg.gateways.healthcheck_gw import (
+from payments.infrastructure.sa.pg.gateways.healthcheck_gw import (
     SAPGHealthCheckGateway,
 )
-from dci_template.infrastructure.sa.pg.gateways.outbox_processor_gw import (
+from payments.infrastructure.sa.pg.gateways.outbox_processor_gw import (
     SAPGOutboxProcessorGateway,
 )
-from dci_template.infrastructure.sa.pg.transaction_manager import (
+from payments.infrastructure.sa.pg.transaction_manager import (
     SAPGEntitySaver,
     SAPGTransactionManager,
 )

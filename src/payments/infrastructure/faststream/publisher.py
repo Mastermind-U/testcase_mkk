@@ -2,10 +2,10 @@ import inspect
 
 from faststream.kafka import KafkaBroker
 
-from dci_template.application.commands.outbox_processor.publisher import (
+from payments.application.commands.outbox_processor.publisher import (
     OutboxPublisher,
 )
-from dci_template.entities.entities import OutboxEvent
+from payments.entities.entities import OutboxEvent
 
 
 class FaststreamKafkaOutboxPublisher(OutboxPublisher):

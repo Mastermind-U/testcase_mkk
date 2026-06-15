@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from dci_template.entities.entities import OutboxEvent
+from payments.entities.entities import OutboxEvent
 
 
 class OutboxPublisher(Protocol):
