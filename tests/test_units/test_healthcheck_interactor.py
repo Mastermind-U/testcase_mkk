@@ -1,8 +1,6 @@
 from unittest.mock import AsyncMock
 
-from payments.application.queries.healthcheck.gateway import (
-    HealthCheckGateway,
-)
+from payments.application.queries.healthcheck.gateway import HealthCheckGateway
 from payments.application.queries.healthcheck.interactor import (
     HealthCheckInteractor,
 )

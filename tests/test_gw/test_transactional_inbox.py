@@ -6,9 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from payments.entities.entities import TransactionalInbox
 from payments.infrastructure.sa.pg.tables import transactional_inbox_t
-from payments.infrastructure.sa.pg.transaction_manager import (
-    SAPGEntitySaver,
-)
+from payments.infrastructure.sa.pg.transaction_manager import SAPGEntitySaver
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
