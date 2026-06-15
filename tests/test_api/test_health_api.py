@@ -58,7 +58,7 @@ async def container(
 
 @pytest.mark.parametrize("health_interactor_mock", [True], indirect=True)
 def test_health_contract(http_client: TestClient) -> None:
-    response = http_client.get("/health")
+    response = http_client.get("/api/v1/health")
     response.raise_for_status()
     data = response.json()
     assert data["status"] is True
@@ -66,5 +66,5 @@ def test_health_contract(http_client: TestClient) -> None:
 
 @pytest.mark.parametrize("health_interactor_mock", [False], indirect=True)
 def test_health_returns_503(http_client: TestClient) -> None:
-    response = http_client.get("/health")
+    response = http_client.get("/api/v1/health")
     assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE

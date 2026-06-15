@@ -34,6 +34,98 @@ services:
       retries: 5
       start_period: 30s
 
+  migrations:
+    build:
+      context: .
+    env_file:
+      - local.env
+    environment:
+      POSTGRES_HOST: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["alembic", "upgrade", "head"]
+
+  api:
+    build:
+      context: .
+    env_file:
+      - local.env
+    environment:
+      APP_HOST: 0.0.0.0
+      POSTGRES_HOST: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: ["python", "-m", "payments", "--app"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payments.rule=Host(`payments.localhost`)"
+      - "traefik.http.routers.payments.entrypoints=web"
+      - "traefik.http.services.payments.loadbalancer.server.port=8000"
+
+  outbox-scheduler:
+    build:
+      context: .
+    env_file:
+      - local.env
+    environment:
+      POSTGRES_HOST: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: ["python", "-m", "payments", "--scheduler"]
+
+  consumer:
+    build:
+      context: .
+    env_file:
+      - local.env
+    environment:
+      POSTGRES_HOST: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: ["python", "-m", "payments", "--consumer"]
+
+  traefik:
+    image: traefik:v3.6.1
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      DOCKER_API_VERSION: "1.44"
+    ports:
+      - "80:80"
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.payments.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+
 volumes:
   postgres_data:
   rabbitmq_data:

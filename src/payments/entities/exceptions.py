@@ -4,3 +4,7 @@ class BaseDomainError(Exception):
 
 class ObjectNotFoundError(BaseDomainError):
     pass
+
+
+class ValidationError(BaseDomainError):
+    pass

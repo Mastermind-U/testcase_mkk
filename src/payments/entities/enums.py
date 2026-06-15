@@ -1,4 +1,16 @@
-from enum import IntEnum
+from enum import IntEnum, StrEnum
+
+
+class Currency(StrEnum):
+    RUB = "RUB"
+    USD = "USD"
+    EUR = "EUR"
+
+
+class PaymentStatus(StrEnum):
+    PENDING = "pending"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
 
 
 class OutboxStatus(IntEnum):
