@@ -177,6 +177,19 @@ wheels = [
 ]
 
 [[package]]
+name = "dishka-faststream"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dishka" },
+    { name = "faststream" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1c/32/c8df3791072a5ea11abaa8e142536fe8cd7745f3fe25e4be4fdf3ac112f5/dishka_faststream-0.7.0.tar.gz", hash = "sha256:b8c6e95bf30f32fc67b3289697cee51c3047778afe195aa9a1062d21e64bfb7b", size = 118092, upload-time = "2026-06-04T17:34:30.856Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/9f/b1918e3ee6814f1b94489ff367b9178e2730a3d23370c24f2f2bce5886e5/dishka_faststream-0.7.0-py3-none-any.whl", hash = "sha256:6f68ce1520b9f15478c8e8407e0d36cdcf1261d237a81e0090fb34ab4775e67e", size = 10551, upload-time = "2026-06-04T17:34:29.953Z" },
+]
+
+[[package]]
 name = "docker"
 version = "7.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -600,6 +613,7 @@ dependencies = [
     { name = "alembic" },
     { name = "asyncpg" },
     { name = "dishka" },
+    { name = "dishka-faststream" },
     { name = "fastapi" },
     { name = "faststream", extra = ["rabbit"] },
     { name = "gunicorn" },
@@ -626,6 +640,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.18.4" },
     { name = "asyncpg", specifier = ">=0.31.0" },
     { name = "dishka", specifier = ">=1.9.1" },
+    { name = "dishka-faststream", specifier = ">=0.7.0" },
     { name = "fastapi", specifier = ">=0.135.3" },
     { name = "faststream", extras = ["rabbit"], specifier = ">=0.6.7" },
     { name = "gunicorn", specifier = ">=25.3.0" },

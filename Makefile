@@ -1,5 +1,5 @@
 run:
-	uv run auth
+	uv run payments
 
 before_pr:
 	ruff format
