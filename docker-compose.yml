@@ -16,24 +16,24 @@ services:
       retries: 10
       start_period: 10s
 
-  kafka:
-    image: apache/kafka:4.0.2
-    container_name: payments-kafka
+  rabbitmq:
+    image: rabbitmq:4.1-management
+    container_name: payments-rabbitmq
     restart: unless-stopped
-    user: "0:0"
     env_file:
       - local.env
     ports:
-      - "9092:9092"
+      - "5672:5672"
+      - "15672:15672"
     volumes:
-      - kafka_data:/tmp/kafka-logs
+      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server 127.0.0.1:9092 >/dev/null 2>&1"]
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
       interval: 10s
       timeout: 10s
       retries: 5
-      start_period: 45s
+      start_period: 30s
 
 volumes:
   postgres_data:
-  kafka_data:
+  rabbitmq_data:

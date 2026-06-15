@@ -6,7 +6,7 @@ from dishka import (
     from_context,
     provide,  # pyright: ignore[reportUnknownVariableType]
 )
-from faststream.kafka import KafkaBroker
+from faststream.rabbit import RabbitBroker
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
@@ -34,7 +34,7 @@ from payments.application.transaction_manager import (
 )
 from payments.config import Config
 from payments.infrastructure.faststream.publisher import (
-    FaststreamKafkaOutboxPublisher,
+    FaststreamRabbitOutboxPublisher,
 )
 from payments.infrastructure.sa.pg.gateways.healthcheck_gw import (
     SAPGHealthCheckGateway,
@@ -56,11 +56,11 @@ class MainProvider(Provider):
         return create_async_engine(config.ENGINE_URL)
 
     @provide(scope=Scope.APP)
-    async def get_kafka_broker(
+    async def get_rabbit_broker(
         self,
         config: Config,
-    ) -> AsyncIterator[KafkaBroker]:
-        broker = KafkaBroker(bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
+    ) -> AsyncIterator[RabbitBroker]:
+        broker = RabbitBroker(config.RABBITMQ_URL)
         await broker.connect()
         yield broker
         await broker.stop()
@@ -91,7 +91,7 @@ class MainProvider(Provider):
         scope=Scope.REQUEST,
     )
     outbox_publisher = provide(
-        FaststreamKafkaOutboxPublisher,
+        FaststreamRabbitOutboxPublisher,
         provides=OutboxPublisher,
         scope=Scope.APP,
     )

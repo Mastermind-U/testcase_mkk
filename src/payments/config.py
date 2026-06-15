@@ -15,7 +15,7 @@ class Config:
     POSTGRES_PASSWORD: str = "postgres"  # noqa: S105
     POSTGRES_DB: str = "postgres"
     POSTGRES_URL_SCHEMA: str = "postgresql+asyncpg"
-    KAFKA_BOOTSTRAP_SERVERS: str = "localhost:9092"
+    RABBITMQ_URL: str = "amqp://guest:guest@localhost:5672/"
     OUTBOX_SCHEDULER_INTERVAL_SECONDS: float = 1.0
     OUTBOX_SCHEDULER_BATCH_SIZE: int = 100
 
@@ -33,9 +33,9 @@ class Config:
                 cls.POSTGRES_PASSWORD,
             ),
             POSTGRES_DB=os.getenv("POSTGRES_DB", cls.POSTGRES_DB),
-            KAFKA_BOOTSTRAP_SERVERS=os.getenv(
-                "KAFKA_BOOTSTRAP_SERVERS",
-                cls.KAFKA_BOOTSTRAP_SERVERS,
+            RABBITMQ_URL=os.getenv(
+                "RABBITMQ_URL",
+                cls.RABBITMQ_URL,
             ),
             OUTBOX_SCHEDULER_INTERVAL_SECONDS=cls._env_float(
                 "OUTBOX_SCHEDULER_INTERVAL_SECONDS",

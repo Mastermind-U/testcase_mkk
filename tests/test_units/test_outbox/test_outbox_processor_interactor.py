@@ -58,7 +58,7 @@ async def test_outbox_processor_backoff_failed() -> None:
     gw.get_waiting.return_value = [event]
     gw.delete_old.return_value = 0
     publisher = AsyncMock(spec=OutboxPublisher)
-    publisher.publish.side_effect = RuntimeError("kafka is down")
+    publisher.publish.side_effect = RuntimeError("rabbitmq is down")
     tx = AsyncMock(spec=TransactionManager)
     interactor = OutboxProcessorInteractor(gw, publisher, tx)
 
@@ -71,7 +71,7 @@ async def test_outbox_processor_backoff_failed() -> None:
     assert event.status == OutboxStatus.FAILED
     assert event.retry_times == 1
     assert event.next_retry_at == now + timedelta(minutes=1)
-    assert event.failure_reason == "kafka is down"
+    assert event.failure_reason == "rabbitmq is down"
     tx.commit.assert_awaited()
 
 
@@ -90,7 +90,7 @@ async def test_outbox_processor_dead_lettered() -> None:
     gw.get_waiting.return_value = [event]
     gw.delete_old.return_value = 0
     publisher = AsyncMock(spec=OutboxPublisher)
-    publisher.publish.side_effect = RuntimeError("kafka is down")
+    publisher.publish.side_effect = RuntimeError("rabbitmq is down")
     tx = AsyncMock(spec=TransactionManager)
     interactor = OutboxProcessorInteractor(gw, publisher, tx)
 
