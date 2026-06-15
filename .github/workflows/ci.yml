@@ -1,0 +1,160 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Postgres image
+        id: cache-postgres-image
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-cache/postgres-15.17-trixie.tar
+          key: ${{ runner.os }}-postgres-15.17-trixie
+
+      - name: Load Postgres image from cache
+        if: steps.cache-postgres-image.outputs.cache-hit == 'true'
+        run: docker load -i /tmp/docker-cache/postgres-15.17-trixie.tar
+
+      - name: Pull Postgres image
+        if: steps.cache-postgres-image.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/docker-cache
+          docker pull postgres:15.17-trixie
+          docker save postgres:15.17-trixie -o /tmp/docker-cache/postgres-15.17-trixie.tar
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run tests
+        run: uv run pytest -q
+
+  import_linter:
+    name: Import Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run import-linter
+        run: uv run lint-imports
+
+  ruff_format:
+    name: Ruff Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check formatting
+        run: uv run ruff format --check src tests
+
+  ruff_lint:
+    name: Ruff Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run ruff
+        run: uv run ruff check --output-format=github src tests
+
+  mypy:
+    name: Mypy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Run mypy
+        run: uv run mypy src tests

@@ -1,0 +1,9 @@
+from typing import Protocol
+
+from dci_template.entities.entities import OutboxEvent
+
+
+class OutboxProcessorGateway(Protocol):
+    async def get_waiting(self, limit: int = 100) -> list[OutboxEvent]: ...
+    async def update_sent_status(self, event: OutboxEvent) -> None: ...
+    async def delete_old(self) -> int: ...

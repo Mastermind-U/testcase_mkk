@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:15.17-trixie
+    container_name: dci-template-postgres
+    restart: unless-stopped
+    env_file:
+      - local.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  kafka:
+    image: apache/kafka:4.0.2
+    container_name: dci-template-kafka
+    restart: unless-stopped
+    user: "0:0"
+    env_file:
+      - local.env
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/tmp/kafka-logs
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server 127.0.0.1:9092 >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+volumes:
+  postgres_data:
+  kafka_data:

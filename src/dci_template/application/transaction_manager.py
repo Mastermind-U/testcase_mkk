@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from dci_template.entities.entities import BaseEntity
+
+
+class TransactionManager(Protocol):
+    async def commit(self) -> None: ...
+    async def rollback(self) -> None: ...
+
+
+class EntitySaver(Protocol):
+    def add_one(self, entity: BaseEntity) -> None: ...
+    async def delete(self, entity: BaseEntity) -> None: ...
