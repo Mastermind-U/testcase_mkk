@@ -6,6 +6,7 @@ from sqlalchemy import (
     Column,
     DateTime,
     Enum as SAEnum,
+    Index,
     Integer,
     MetaData,
     Numeric,
@@ -84,6 +85,8 @@ payments_t = Table(
     ),
     Column("processed_at", DateTime(timezone=True), nullable=True),
     UniqueConstraint("idempotency_key", name="uq_payments_idempotency_key"),
+    Index("ix_payments_id", "id"),
+    Index("ix_payments_idempotency_key", "idempotency_key"),
 )
 
 outbox_t = Table(

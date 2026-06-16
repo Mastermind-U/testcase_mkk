@@ -58,6 +58,12 @@ def upgrade(container: AsyncContainer) -> None:  # noqa: ARG001
             name="uq_payments_idempotency_key",
         ),
     )
+    op.create_index("ix_payments_id", "payments", ["id"])
+    op.create_index(
+        "ix_payments_idempotency_key",
+        "payments",
+        ["idempotency_key"],
+    )
     op.create_table(
         "outbox_events",
         sa.Column("id", sa.UUID(), nullable=False),

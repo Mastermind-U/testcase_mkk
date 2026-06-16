@@ -14,7 +14,11 @@ class SAPGPaymentGateway:
         self,
         idempotency_key: str,
     ) -> Payment | None:
-        stmt = select(Payment).filter_by(idempotency_key=idempotency_key)
+        stmt = (
+            select(Payment)
+            .filter_by(idempotency_key=idempotency_key)
+            .with_for_update()
+        )
         return await self._session.scalar(stmt)
 
     async def get_by_id(self, payment_id: UUID) -> Payment | None:
